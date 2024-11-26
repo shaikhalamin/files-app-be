@@ -1,7 +1,6 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 // import { join } from 'path';
@@ -10,14 +9,16 @@ import { ResponseTransformInterceptor } from './common/interceptor/global-respon
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  //app.useStaticAssets(join(__dirname, './public'));
-  const configService = app.get(ConfigService);
-
   app.setGlobalPrefix('api/v1', {
     exclude: [{ path: '/', method: RequestMethod.GET }],
   });
 
-  app.enableCors();
+  const allowedHosts = (process.env.CORS_ALLOWED_HOSTS as string) || '*';
+  app.enableCors({
+    origin: allowedHosts.split(','),
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
 
   app.use(helmet());
 
@@ -41,7 +42,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api-docs', app, document);
 
-  const PORT = configService.get<number>('PORT', 8056);
+  const PORT = process.env.PORT || 8056;
 
   await app.listen(PORT, '0.0.0.0', async () => {
     return Logger.log(`Application started on port ${await app.getUrl()}`);
