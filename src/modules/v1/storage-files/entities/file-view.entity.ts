@@ -13,6 +13,8 @@ export class FileView extends BaseEntity {
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   viewed_at: Date;
 
+  //check pg connection
+
   @ManyToOne(() => StorageFile, (file) => file.views, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'file_id' })
   file: StorageFile;
