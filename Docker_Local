@@ -1,0 +1,11 @@
+FROM node:lts
+
+ENV NODE_ENV development
+WORKDIR /home/node
+
+COPY package*.json ./
+COPY . .
+
+RUN npm install
+RUN npm run build
+EXPOSE 8056

@@ -1,0 +1,71 @@
+version: '3.7'
+
+networks:
+  backend-network:
+
+
+services:
+  backend_api:
+    build:
+      context: .
+      dockerfile: ./Docker_Local
+    command: npm run start:dev
+    restart: always
+    container_name: backend_api_container
+    volumes:
+      - ./:/home/node
+      - /home/node/node_modules
+    ports:
+      - '8056:8056'
+    depends_on:
+      backend_database:
+        condition: service_healthy
+      backend_redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - backend-network
+
+  backend_database:
+    image: postgres:14.9-alpine
+    restart: always
+    container_name: backend_database_container
+    volumes:
+      - ./backend_pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=backend_db
+    ports:
+      - '5457:5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend-network
+
+  backend_redis:
+    image: redis:latest
+    restart: always
+    container_name: backend_redis_container
+    ports:
+      - '6332:6379'
+    volumes:
+      - ./backend_redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - backend-network
+
+volumes:
+  backend_redis_data:
+    driver: local
+  backend_pg_data:
+    driver: local
