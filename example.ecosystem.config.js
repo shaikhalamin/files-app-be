@@ -8,10 +8,12 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 8056,
-        DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/node_backend',
+        DATABASE_URL:
+          'postgresql://postgres:postgres@localhost:5432/backend_db',
         REDIS_HOST: 'localhost',
         REDIS_PORT: 6379,
         JWT_TOKEN_SECRET: 'insertyourvaluehere',
+        FRONTEND_APP_BASE_URL: 'http://164.92.172.255',
       },
       output: './logs/out.log', // Standard output logs
       error: './logs/error.log', // Error logs
