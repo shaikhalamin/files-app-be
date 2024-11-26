@@ -37,10 +37,7 @@ import { StorageFilesModule } from './modules/v1/storage-files/storage-files.mod
       isGlobal: true,
       useFactory: async (configService: ConfigService) => ({
         store: await redisStore({
-          socket: {
-            host: configService.get('REDIS_HOST') || 'localhost',
-            port: Number(configService.get('REDIS_PORT')) || 6379,
-          },
+          url: configService.get('REDIS_URL') || 'redis://localhost:6379',
         }),
       }),
       inject: [ConfigService],
