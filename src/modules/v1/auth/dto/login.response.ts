@@ -17,8 +17,4 @@ export class LoginResponseDto {
     type: () => UserResponseDto,
   })
   user: UserResponseDto;
-
-  @Expose()
-  @ApiProperty()
-  expires_at: number;
 }

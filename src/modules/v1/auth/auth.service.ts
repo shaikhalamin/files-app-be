@@ -1,7 +1,6 @@
 import { Logger, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
-import * as ms from 'ms';
 import { RequestUser } from './type/request-user';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
@@ -34,7 +33,6 @@ export class AuthService {
       access_token: this.getAccessToken(payload),
       refresh_token: this.getRefreshToken(payload),
       user: transformedUser,
-      expires_at: this.getTokenExpireAt(),
     };
   }
 
@@ -113,8 +111,8 @@ export class AuthService {
     });
   }
 
-  getTokenExpireAt(): number {
-    const expireAt = Date.now() + ms(`${this.accessTokenExpireIn}`);
-    return expireAt;
-  }
+  // getTokenExpireAt(): number {
+  //   const expireAt = Date.now() + ms(`${this.accessTokenExpireIn}`);
+  //   return expireAt;
+  // }
 }
