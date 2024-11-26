@@ -47,7 +47,22 @@ export class StorageFilesService {
       // const fileUrl = `${fileKey}`;
 
       const folderPath = `fileshare/user_uploads`;
-      const { public_id } = await cloudinaryUpload(file.path, folderPath);
+
+      let resourceType: string;
+
+      if (file.mimetype.startsWith('image/')) {
+        resourceType = 'image';
+      } else if (file.mimetype.startsWith('video/')) {
+        resourceType = 'video';
+      } else {
+        resourceType = 'raw'; // Or handle other types if needed
+      }
+
+      const { public_id } = await cloudinaryUpload(
+        file.path,
+        folderPath,
+        resourceType,
+      );
 
       const signedUrl = await cloudinarySignedUrl(public_id);
 

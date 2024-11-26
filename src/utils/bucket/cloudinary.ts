@@ -24,10 +24,12 @@ export const cloudinarySignedUrl = async (public_id: string): Promise<any> => {
 export const cloudinaryUpload = async (
   file: string,
   folder: string,
+  resource_type: string,
 ): Promise<CloudinaryUploadResponse> => {
   try {
     return await cloudinary.uploader.upload(file, {
       folder: folder,
+      resource_type: resource_type,
       access_mode: 'authenticated',
     });
   } catch (error) {
