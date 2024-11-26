@@ -1,5 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CloudinaryUploadResponse } from './cloudinary-response';
+import { config } from 'dotenv';
+config();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cloudinary = require('cloudinary').v2;
@@ -8,6 +10,8 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+console.log('Cloudinary Config:', cloudinary.config());
 
 export const cloudinarySignedUrl = async (
   public_id: string,
