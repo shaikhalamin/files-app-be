@@ -25,9 +25,31 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     this.logger.log('all exception ', { error: JSON.stringify(exception) });
 
-    // console.log('exception', exception);
-    let message: string | string[] = 'An unexpected error occurred';
+    console.log('exception got ', exception);
 
+    // console.log('exception', exception);
+    // let message: string | string[] = 'An unexpected error occurred';
+
+    // if (exception instanceof BadRequestException) {
+    //   const exceptionResponse = exception.getResponse();
+    //   if (
+    //     typeof exceptionResponse === 'object' &&
+    //     'message' in exceptionResponse
+    //   ) {
+    //     const errorMessage = exceptionResponse['message'];
+    //     if (Array.isArray(errorMessage)) {
+    //       message = errorMessage;
+    //     } else if (typeof errorMessage === 'string') {
+    //       message = errorMessage;
+    //     } else {
+    //       message = 'Something went wrong';
+    //     }
+    //   }
+    // } else if (exception instanceof HttpException) {
+    //   message = exception.message;
+    // }
+
+    let message: string | string[] = 'An unexpected error occurred';
     if (exception instanceof BadRequestException) {
       const exceptionResponse = exception.getResponse();
       if (
@@ -45,6 +67,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       }
     } else if (exception instanceof HttpException) {
       message = exception.message;
+    } else if (exception instanceof Error) {
+      message = exception.message || 'Unknown error occurred';
+    } else {
+      message = 'An unexpected error occurred';
     }
 
     const responseBody = {
