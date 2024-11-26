@@ -121,6 +121,7 @@ export class StorageFilesController {
       // Redirect the user to the Cloudinary signed URL for download
       return {
         signedUrl,
+        contentType,
       };
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -162,7 +163,7 @@ export class StorageFilesController {
       await this.storageFilesService.logFileView(file.id, viewerIp, viewerId);
 
       // Redirect the user to the Cloudinary signed URL for download
-      return { signedUrl };
+      return { signedUrl, contentType };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -186,7 +187,7 @@ export class StorageFilesController {
       await this.storageFilesService.logFileView(file.id, viewerIp);
 
       // Redirect the user to the Cloudinary signed URL for download
-      return { signedUrl };
+      return { signedUrl, contentType };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
