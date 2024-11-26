@@ -14,7 +14,7 @@ export const cloudinarySignedUrl = async (public_id: string): Promise<any> => {
     return await cloudinary.url(public_id, {
       sign_url: true,
       secure: true,
-      expires_at: Math.floor(Date.now() / 1000) + 3600 * 2, // Expires in 2 hour
+      expires_at: Math.floor(Date.now() / 1000) + 3600 * 2,
     });
   } catch (error) {
     throw new BadRequestException(error.message);
