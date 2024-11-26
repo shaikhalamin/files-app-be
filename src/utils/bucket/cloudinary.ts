@@ -9,12 +9,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const cloudinarySignedUrl = async (public_id: string): Promise<any> => {
+export const cloudinarySignedUrl = async (
+  public_id: string,
+  resource_type: string,
+): Promise<any> => {
   try {
     return await cloudinary.url(public_id, {
       sign_url: true,
       secure: true,
-      expires_at: Math.floor(Date.now() / 1000) + 3600 * 2,
+      resource_type: resource_type,
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
     });
   } catch (error) {
     throw new BadRequestException(error.message);
@@ -29,8 +33,8 @@ export const cloudinaryUpload = async (
   try {
     return await cloudinary.uploader.upload(file, {
       folder: folder,
+      secure: true,
       resource_type: resource_type,
-      access_mode: 'authenticated',
     });
   } catch (error) {
     throw new BadRequestException(error.message);

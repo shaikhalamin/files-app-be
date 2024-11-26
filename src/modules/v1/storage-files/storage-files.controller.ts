@@ -109,8 +109,10 @@ export class StorageFilesController {
     try {
       const file = await this.storageFilesService.findOne(fileName);
 
+      const contentType = file.file_content_type.split('/')[0];
+
       // Generate the signed URL from Cloudinary
-      const signedUrl = await cloudinarySignedUrl(file.file_key);
+      const signedUrl = await cloudinarySignedUrl(file.file_key, contentType);
 
       if (!signedUrl) {
         throw new BadRequestException('Unable to generate signed URL');
@@ -145,8 +147,10 @@ export class StorageFilesController {
   ) {
     try {
       const file = await this.storageFilesService.findOne(fileName);
+
+      const contentType = file.file_content_type.split('/')[0];
       // Generate the signed URL from Cloudinary
-      const signedUrl = await cloudinarySignedUrl(file.file_key);
+      const signedUrl = await cloudinarySignedUrl(file.file_key, contentType);
 
       if (!signedUrl) {
         throw new BadRequestException('Unable to generate signed URL');
@@ -168,8 +172,10 @@ export class StorageFilesController {
   async publicPreview(@Param('token') token: string, @Request() req: any) {
     try {
       const file = await this.storageFilesService.validateToken(token);
+
+      const contentType = file.file_content_type.split('/')[0];
       // Generate the signed URL from Cloudinary
-      const signedUrl = await cloudinarySignedUrl(file.file_key);
+      const signedUrl = await cloudinarySignedUrl(file.file_key, contentType);
 
       if (!signedUrl) {
         throw new BadRequestException('Unable to generate signed URL');

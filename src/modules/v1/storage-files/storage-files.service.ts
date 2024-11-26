@@ -64,7 +64,7 @@ export class StorageFilesService {
         resourceType,
       );
 
-      const signedUrl = await cloudinarySignedUrl(public_id);
+      const signedUrl = await cloudinarySignedUrl(public_id, resourceType);
 
       const storageFile = this.storageFileRepository.create({
         file_name: file.filename,
