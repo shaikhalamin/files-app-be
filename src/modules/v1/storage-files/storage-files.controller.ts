@@ -9,7 +9,6 @@ import {
   ValidationPipe,
   UseInterceptors,
   UploadedFile,
-  Res,
   BadRequestException,
   UseGuards,
   Query,
@@ -23,7 +22,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { FileUploadDto } from './dto/file-upload.dto';
 // import { existsSync } from 'fs';
-import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CurrentUser } from '../../../common/decorator/loggedin-user.decorator';
 import { ExpressRequestUser } from '../../../common/types/express-user';
@@ -107,10 +105,7 @@ export class StorageFilesController {
   @Get('download/:fileName')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  async downloadFile(
-    @Param('fileName') fileName: string,
-    @Res() res: Response,
-  ) {
+  async downloadFile(@Param('fileName') fileName: string) {
     try {
       const file = await this.storageFilesService.findOne(fileName);
 
@@ -122,7 +117,9 @@ export class StorageFilesController {
       }
 
       // Redirect the user to the Cloudinary signed URL for download
-      return res.redirect(signedUrl);
+      return {
+        signedUrl,
+      };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -145,7 +142,6 @@ export class StorageFilesController {
   async privatePreview(
     @Param('fileName') fileName: string,
     @Request() req: any,
-    @Res() res: Response,
   ) {
     try {
       const file = await this.storageFilesService.findOne(fileName);
@@ -156,19 +152,20 @@ export class StorageFilesController {
         throw new BadRequestException('Unable to generate signed URL');
       }
 
+      const viewerIp = req.ip;
+      const viewerId = req.user?.id;
+
+      await this.storageFilesService.logFileView(file.id, viewerIp, viewerId);
+
       // Redirect the user to the Cloudinary signed URL for download
-      return res.redirect(signedUrl);
+      return { signedUrl };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
   @Get('public/preview/:token')
-  async publicPreview(
-    @Param('token') token: string,
-    @Request() req: any,
-    @Res() res: Response,
-  ) {
+  async publicPreview(@Param('token') token: string, @Request() req: any) {
     try {
       const file = await this.storageFilesService.validateToken(token);
       // Generate the signed URL from Cloudinary
@@ -178,8 +175,12 @@ export class StorageFilesController {
         throw new BadRequestException('Unable to generate signed URL');
       }
 
+      const viewerIp = req.ip;
+
+      await this.storageFilesService.logFileView(file.id, viewerIp);
+
       // Redirect the user to the Cloudinary signed URL for download
-      return res.redirect(signedUrl);
+      return { signedUrl };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
