@@ -17,11 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@/auth/*": ["src/modules/auth/*"],
-      "@/common/*": ["src/common/*"],
-      "@/db/*": ["db/*"],
-      "@/user/*": ["src/modules/user/*"]
-    }
+    // "paths": {
+    //   "@/auth/*": ["src/modules/auth/*"],
+    //   "@/common/*": ["src/common/*"],
+    //   "@/db/*": ["db/*"],
+    //   "@/user/*": ["src/modules/user/*"]
+    // }
   }
 }

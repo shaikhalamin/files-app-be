@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, Index, OneToMany } from 'typeorm';
-import { BaseEntity } from '@/common/entity/base.entity';
+import { BaseEntity } from '../../../../common/entity/base.entity';
 import * as bcrypt from 'bcrypt';
 import { StorageFile } from '../../storage-files/entities/storage-file.entity';
 

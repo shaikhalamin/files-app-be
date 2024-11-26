@@ -6,20 +6,14 @@ export const configValidationSchema = Joi.object({
     .valid('development', 'local', 'production')
     .default('development'),
 
-  /**
-   * * Redis Database
-   */
-  REDIS_HOST: Joi.string().default('localhost'),
-  REDIS_PORT: Joi.number().default(8056),
-
-  /**
-   * * Postgres Database
-   */
   DATABASE_URL: Joi.string().default(
     'postgresql://postgres:postgres@localhost:5432/backend_db',
   ),
 
-
   JWT_TOKEN_SECRET: Joi.string().required(),
 
+  CORS_ALLOWED_HOSTS: Joi.string().required(),
+  REDIS_URL: Joi.string().required(),
+
+  FRONTEND_APP_BASE_URL: Joi.string().required(),
 });

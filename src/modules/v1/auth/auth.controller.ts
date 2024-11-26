@@ -7,7 +7,7 @@ import { LoginResponseDto } from './dto/login.response';
 import { JwtRefreshAuthGuard } from './guard/jwt-refresh-auth.guard';
 import { RequestUser } from './type/request-user';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { ResponseType } from '@/common/decorator/response-type.decorator';
+import { ResponseType } from '../../../common/decorator/response-type.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { configValidationSchema } from './common/schema/config-schema';
+// import { configValidationSchema } from './common/schema/config-schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { getDatabaseConfig } from 'db/data-source';
 import { APP_FILTER } from '@nestjs/core';
@@ -34,10 +34,10 @@ export const getDatabaseConfig = (
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: configValidationSchema,
-      validationOptions: {
-        abortEarly: false,
-      },
+      // validationSchema: configValidationSchema,
+      // validationOptions: {
+      //   abortEarly: false,
+      // },
     }),
     TypeOrmModule.forRootAsync({
       name: 'default',

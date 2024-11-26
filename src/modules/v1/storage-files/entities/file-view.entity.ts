@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@/common/entity/base.entity';
+import { BaseEntity } from '../../../../common/entity/base.entity';
 import { StorageFile } from './storage-file.entity';
 
 @Entity('file_views')

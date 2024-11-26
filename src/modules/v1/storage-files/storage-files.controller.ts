@@ -25,8 +25,8 @@ import { FileUploadDto } from './dto/file-upload.dto';
 import { existsSync, mkdirSync } from 'fs';
 import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { CurrentUser } from '@/common/decorator/loggedin-user.decorator';
-import { ExpressRequestUser } from '@/common/types/express-user';
+import { CurrentUser } from '../../../common/decorator/loggedin-user.decorator';
+import { ExpressRequestUser } from '../../../common/types/express-user';
 import { FilesQueryFilterDto } from './entities/files-query-filter.dto';
 
 @ApiTags('Storage Files')
