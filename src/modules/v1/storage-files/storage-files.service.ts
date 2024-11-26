@@ -8,7 +8,7 @@ import {
 import { StorageFile } from './entities/storage-file.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { join } from 'path';
+// import { join } from 'path';
 import { FileTag } from './entities/file-tag.entity';
 import { FileUploadDto } from './dto/file-upload.dto';
 import { FilesQueryFilterDto } from './entities/files-query-filter.dto';
@@ -17,6 +17,10 @@ import { ConfigService } from '@nestjs/config';
 import { FileView } from './entities/file-view.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import {
+  cloudinarySignedUrl,
+  cloudinaryUpload,
+} from '../../../utils/bucket/cloudinary';
 
 @Injectable()
 export class StorageFilesService {
@@ -39,14 +43,20 @@ export class StorageFilesService {
     userId: string,
   ) {
     try {
-      const fileKey = join('public', 'uploads', file.filename);
-      const fileUrl = `${fileKey}`;
+      // const fileKey = join('public', 'uploads', file.filename);
+      // const fileUrl = `${fileKey}`;
+
+      const folderPath = `fileshare/user_uploads`;
+      const { public_id } = await cloudinaryUpload(file.path, folderPath);
+
+      const signedUrl = await cloudinarySignedUrl(public_id);
+
       const storageFile = this.storageFileRepository.create({
         file_name: file.filename,
         file_content_type: file.mimetype,
-        file_key: fileKey,
+        file_key: public_id,
         size: file.size,
-        file_url: fileUrl,
+        file_url: signedUrl,
         tags: [],
         user: { id: userId },
       });

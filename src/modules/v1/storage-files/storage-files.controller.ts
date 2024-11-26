@@ -20,14 +20,15 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { extname, join } from 'path';
+import { extname } from 'path';
 import { FileUploadDto } from './dto/file-upload.dto';
-import { existsSync, mkdirSync } from 'fs';
+// import { existsSync } from 'fs';
 import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CurrentUser } from '../../../common/decorator/loggedin-user.decorator';
 import { ExpressRequestUser } from '../../../common/types/express-user';
 import { FilesQueryFilterDto } from './entities/files-query-filter.dto';
+import { cloudinarySignedUrl } from 'src/utils/bucket/cloudinary';
 
 @ApiTags('Storage Files')
 @Controller('storage-files')
@@ -43,21 +44,21 @@ export class StorageFilesController {
   @UseInterceptors(
     FileInterceptor('fileName', {
       storage: diskStorage({
-        destination: (req, file, cb) => {
-          const uploadsPath = join(
-            __dirname,
-            '..',
-            '..',
-            '..',
-            '..',
-            'public',
-            'uploads',
-          );
-          if (!existsSync(uploadsPath)) {
-            mkdirSync(uploadsPath, { recursive: true });
-          }
-          cb(null, uploadsPath);
-        },
+        // destination: (req, file, cb) => {
+        //   const uploadsPath = join(
+        //     __dirname,
+        //     '..',
+        //     '..',
+        //     '..',
+        //     '..',
+        //     'public',
+        //     'uploads',
+        //   );
+        //   if (!existsSync(uploadsPath)) {
+        //     mkdirSync(uploadsPath, { recursive: true });
+        //   }
+        //   cb(null, uploadsPath);
+        // },
         filename: (req, file, cb) => {
           const randomName = uuidv4();
           const fileName = `${Date.now()}-${randomName}${extname(file.originalname)}`;
@@ -112,30 +113,16 @@ export class StorageFilesController {
   ) {
     try {
       const file = await this.storageFilesService.findOne(fileName);
-      const absoluteFilePath = join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'public',
-        'uploads',
-        file.file_name,
-      );
 
-      if (!existsSync(absoluteFilePath)) {
-        throw new BadRequestException('File not found');
+      // Generate the signed URL from Cloudinary
+      const signedUrl = await cloudinarySignedUrl(file.file_key);
+
+      if (!signedUrl) {
+        throw new BadRequestException('Unable to generate signed URL');
       }
 
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="${file.file_name}"`,
-      );
-      return res.sendFile(absoluteFilePath, (err) => {
-        if (err) {
-          console.error('Error sending file:', err);
-        }
-      });
+      // Redirect the user to the Cloudinary signed URL for download
+      return res.redirect(signedUrl);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -162,35 +149,15 @@ export class StorageFilesController {
   ) {
     try {
       const file = await this.storageFilesService.findOne(fileName);
-      const absoluteFilePath = join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'public',
-        'uploads',
-        file.file_name,
-      );
+      // Generate the signed URL from Cloudinary
+      const signedUrl = await cloudinarySignedUrl(file.file_key);
 
-      if (!existsSync(absoluteFilePath)) {
-        throw new BadRequestException('File not found');
+      if (!signedUrl) {
+        throw new BadRequestException('Unable to generate signed URL');
       }
 
-      const viewerIp = req.ip;
-      const viewerId = req.user?.id;
-
-      await this.storageFilesService.logFileView(file.id, viewerIp, viewerId);
-
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="${file.file_name}"`,
-      );
-      return res.sendFile(absoluteFilePath, (err) => {
-        if (err) {
-          console.error('Error sending file:', err);
-        }
-      });
+      // Redirect the user to the Cloudinary signed URL for download
+      return res.redirect(signedUrl);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -204,34 +171,15 @@ export class StorageFilesController {
   ) {
     try {
       const file = await this.storageFilesService.validateToken(token);
-      const absoluteFilePath = join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'public',
-        'uploads',
-        file.file_name,
-      );
+      // Generate the signed URL from Cloudinary
+      const signedUrl = await cloudinarySignedUrl(file.file_key);
 
-      if (!existsSync(absoluteFilePath)) {
-        throw new BadRequestException('File not found');
+      if (!signedUrl) {
+        throw new BadRequestException('Unable to generate signed URL');
       }
 
-      const viewerIp = req.ip;
-
-      await this.storageFilesService.logFileView(file.id, viewerIp);
-
-      res.setHeader(
-        'Content-Disposition',
-        `attachment; filename="${file.file_name}"`,
-      );
-      return res.sendFile(absoluteFilePath, (err) => {
-        if (err) {
-          console.error('Error sending file:', err);
-        }
-      });
+      // Redirect the user to the Cloudinary signed URL for download
+      return res.redirect(signedUrl);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
